@@ -2,11 +2,9 @@ from flask import Flask
 from flask import render_template
 from data import db_session
 from data.users import User
-from data.forms import RegisterForm, LoginForm
+from forms.forms import RegisterForm, LoginForm
 from flask import redirect
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from flask import request, abort
-
+from flask_login import LoginManager, login_user, logout_user, login_required
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -52,19 +50,14 @@ def register():
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
-            surname=form.surname.data,
-            name=form.name.data,
-            age=form.age.data,
-            about=form.about.data,
             email=form.email.data,
             nickname=form.nickname.data,
-            achievements='',
         )
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('register.html', title='Registration', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -4,7 +4,8 @@ from data import db_session
 from data.users import User
 from forms.forms import RegisterForm, LoginForm
 from flask import redirect
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required
+from conf.routes import generate_routes
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -17,6 +18,8 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+generate_routes(app)
 
 
 def page_not_found(e):
@@ -111,13 +114,15 @@ def shop():
     return render_template('shop.html', title='Shop')
 
 
-@app.route("/<nickname>")
-@login_required
+@app.route("/users/<nickname>")
 def user_page(nickname):
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
-    user = session.query(User)
-    return render_template('user_page.html', title=f'{nickname}')
+    user = session.query(User).filter(User.nickname == nickname).first()
+    print(nickname)
+    return render_template('user_page.html', title=f'{nickname}', nickname=nickname,
+                           surname=user.surname, name=user.name, about=user.about,
+                           age=user.age, acievements=user.achievements)
 
 
 @app.route("/chats")
@@ -130,4 +135,5 @@ def chats():
 
 
 if __name__ == '__main__':
+    db_session.global_init("db/database.sqlite")
     app.run(port=8080, host='127.0.0.1')

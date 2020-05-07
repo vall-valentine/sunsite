@@ -9,8 +9,8 @@
 </head>
 <body>
 <header>
+    {% if current_user.is_authenticated %}
     <div class="nav">
-        {% if current_user.is_authenticated %}
         <div class="punct"><img src="{{url_for('static', filename='img/ulitka.png')}}" alt="logo" width="120px"
                                 height="70px"></div>
         <div class="punct" onclick="redirect('/index')"><span>Лента</span></div>
@@ -18,11 +18,26 @@
         <div class="punct" onclick="redirect('/shop')"><span>Магазин</span></div>
         <div class="punct" onclick="redirect('/{{current_user.nickname}}')"><span>Пользователь</span></div>
         <div class="punct" onclick="redirect('/logout')"><span>Выход</span></div>
-        {% else %}
+    </div>
+    {% else %}
+    <div class="none_auth_nav">
         <div class="solo_logo"><img src="{{url_for('static', filename='img/ulitka.png')}}" alt="logo" width="120px"
                                     height="70px"></div>
-        {% endif %}
+        <div class="logo_txt">
+            <span style="--i:1">#</span>
+            <span style="--i:2">д</span>
+            <span style="--i:3">о</span>
+            <span style="--i:4">м</span>
+            <span style="--i:5">а</span>
+            <span style="--i:6">_</span>
+            <span style="--i:7">л</span>
+            <span style="--i:8">у</span>
+            <span style="--i:9">ч</span>
+            <span style="--i:10">ш</span>
+            <span style="--i:11">е</span>
+        </div>
     </div>
+        {% endif %}
 </header>
 <main role="main" class="container">
     {% block content %}{% endblock %}

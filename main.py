@@ -19,13 +19,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.route("/")
-@app.route("/index")
-def index():
-    db_session.global_init("db/database.sqlite")
-    session = db_session.create_session()
-    user = session.query(User)
-    return render_template("index.html", users=user)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+app.register_error_handler(404, page_not_found)
 
 
 @login_manager.user_loader
@@ -35,23 +33,45 @@ def load_user(user_id):
     return session.query(User).get(user_id)
 
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect('/login')
+
+
+@app.route("/")
+@app.route("/index")
+@login_required
+def index():
+    db_session.global_init("db/database.sqlite")
+    session = db_session.create_session()
+    user = session.query(User)
+    return render_template("feed.html", users=user)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form_reg = RegisterForm()
     form_log = LoginForm()
     if form_reg.validate_on_submit():
         if form_reg.password.data != form_reg.password_again.data:
-            return render_template('login.html', title='Главная',
+            return render_template('enter_page.html', title='Главная',
                                    form_reg=form_reg, form_log=form_log,
                                    message_reg="Пароли не совпадают")
         db_session.global_init("db/database.sqlite")
         session = db_session.create_session()
         if session.query(User).filter(User.email == form_reg.email.data).first():
-            return render_template('login.html', title='Главная',
+            return render_template('enter_page.html', title='Главная',
                                    form_reg=form_reg, form_log=form_log,
                                    message_reg="Такая почта уже есть")
         if session.query(User).filter(User.nickname == form_reg.nickname.data).first():
-            return render_template('login.html', title='Главная',
+            return render_template('enter_page.html', title='Главная',
                                    form_reg=form_reg, form_log=form_log,
                                    message_reg="Такой пользователь уже есть")
         user = User(
@@ -61,8 +81,8 @@ def register():
         user.set_password(form_reg.password.data)
         session.add(user)
         session.commit()
-        return redirect('/login')
-    return render_template('login.html', title='Главная', form_reg=form_reg, form_log=form_log)
+        return redirect('/')
+    return render_template('enter_page.html', title='Главная', form_reg=form_reg, form_log=form_log)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -76,20 +96,14 @@ def login():
         if user and user.check_password(form_log.password.data):
             login_user(user, remember=form_log.remember_me.data)
             return redirect("/")
-        return render_template('login.html',
+        return render_template('enter_page.html',
                                message_log="Неправильный логин или пароль",
                                form_log=form_log, form_reg=form_reg)
-    return render_template('login.html', title='Главная', form_log=form_log, form_reg=form_reg)
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect("/")
+    return render_template('enter_page.html', title='Главная', form_log=form_log, form_reg=form_reg)
 
 
 @app.route("/shop")
+@login_required
 def shop():
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
@@ -98,6 +112,7 @@ def shop():
 
 
 @app.route("/<nickname>")
+@login_required
 def user_page(nickname):
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
@@ -106,6 +121,7 @@ def user_page(nickname):
 
 
 @app.route("/chats")
+@login_required
 def chats():
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()

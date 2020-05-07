@@ -5,6 +5,8 @@ from data.users import User
 from forms.forms import RegisterForm, LoginForm
 from flask import redirect
 from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_restful import Api
+from resourses.user_resourses import UsersListResource, UsersResource
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -17,6 +19,11 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+api = Api(app)
+api.add_resource(UsersListResource, '/api/users')
+
+api.add_resource(UsersResource, '/api/users/<int:user_id>')
 
 
 @app.route("/")
@@ -108,4 +115,5 @@ def chats():
 
 
 if __name__ == '__main__':
+    db_session.global_init("db/database.sqlite")
     app.run(port=8080, host='127.0.0.1')

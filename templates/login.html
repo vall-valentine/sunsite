@@ -1,29 +1,65 @@
 {% extends"base.html" %}
 
 {% block content %}
-    <h1>Первым делом авторизируйтесь!</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.nickname.label }}<br>
-            {{ form.nickname(class="form-control") }}<br>
-            {% for error in form.nickname.errors %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/reset.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main_style.css')}}">
+<div class="index">
+    <div class="about">
+        <img src="{{url_for('static', filename='img/kot.png')}}" width="100%">
+    </div>
+    <div class="reg_log">
+        <div class="log">
+            <span class="message">Вход</span>
+            <form method="POST" action="{{url_for('login')}}">
+                {{ form_log.hidden_tag() }}
+                <input type="email" name="email" placeholder="Введите ваш E-mail" class="inp_email"><br>
+                {% for error in form_log.email.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(class="form-control", type="password") }}<br>
-            {% for error in form.password.errors %}
+                {% endfor %}
+                <input type="password" name="password" placeholder="Введите ваш пароль" class="inp_pas"><br>
+                {% for error in form_log.password.errors %}
+                <div class="alert_message">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                <button class="submit" type="submit" value="log" name="btn_log">Войти</button>
+                <div class="alert_message">{{ message_log }}</div>
+            </form>
+        </div>
+        <div class="reg">
+            <span class="message">Регистрация</span>
+            <form method="POST" action="{{url_for('register')}}">
+                {{ form_reg.hidden_tag() }}
+                <input type="email" name="email" placeholder="Введите ваш E-mail" class="first_inp_reg"><br>
+                {% for error in form_reg.email.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-        <div>{{ message }}</div>
-    </form>
+                {% endfor %}
+                <input type="text" name="nickname" placeholder="Введите ваш никнейм"><br>
+                {% for error in form_reg.nickname.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                <input type="password" name="password" placeholder="Введите ваш пароль"><br>
+                {% for error in form_reg.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                <input type="password" name="password_again" placeholder="Повторите ваш пароль"><br>
+                {% for error in form_reg.password_again.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor %}
+                <button class="submit" type="submit" value="reg" name="btn_reg">Зарегестрироваться</button>
+                <div class="alert_message">{{ message_reg }}</div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

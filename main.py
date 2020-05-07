@@ -4,7 +4,7 @@ from data import db_session
 from data.users import User
 from forms.forms import RegisterForm, LoginForm
 from flask import redirect
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -37,43 +37,49 @@ def load_user(user_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
+    form_reg = RegisterForm()
+    form_log = LoginForm()
+    if form_reg.validate_on_submit():
+        if form_reg.password.data != form_reg.password_again.data:
+            return render_template('login.html', title='Главная',
+                                   form_reg=form_reg, form_log=form_log,
+                                   message_reg="Пароли не совпадают")
         db_session.global_init("db/database.sqlite")
         session = db_session.create_session()
-        if session.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
+        if session.query(User).filter(User.email == form_reg.email.data).first():
+            return render_template('login.html', title='Главная',
+                                   form_reg=form_reg, form_log=form_log,
+                                   message_reg="Такая почта уже есть")
+        if session.query(User).filter(User.nickname == form_reg.nickname.data).first():
+            return render_template('login.html', title='Главная',
+                                   form_reg=form_reg, form_log=form_log,
+                                   message_reg="Такой пользователь уже есть")
         user = User(
-            email=form.email.data,
-            nickname=form.nickname.data,
+            email=form_reg.email.data,
+            nickname=form_reg.nickname.data,
         )
-        user.set_password(form.password.data)
+        user.set_password(form_reg.password.data)
         session.add(user)
         session.commit()
         return redirect('/login')
-    return render_template('register.html', title='Registration', form=form)
+    return render_template('login.html', title='Главная', form_reg=form_reg, form_log=form_log)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
+    form_log = LoginForm()
+    form_reg = RegisterForm()
+    if form_log.validate_on_submit():
         db_session.global_init("db/database.sqlite")
         session = db_session.create_session()
-        user = session.query(User).filter(User.nickname == form.nickname.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
+        user = session.query(User).filter(User.email == form_log.email.data).first()
+        if user and user.check_password(form_log.password.data):
+            login_user(user, remember=form_log.remember_me.data)
             return redirect("/")
         return render_template('login.html',
-                               message="Неправильный логин или пароль",
-                               form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+                               message_log="Неправильный логин или пароль",
+                               form_log=form_log, form_reg=form_reg)
+    return render_template('login.html', title='Главная', form_log=form_log, form_reg=form_reg)
 
 
 @app.route('/logout')

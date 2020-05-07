@@ -13,6 +13,20 @@ def abort_if_user_not_found(user_id):
         abort(404, message=f"User {user_id} not found")
 
 
+def abort_if_nick_not_unique(nick):
+    session = db_session.create_session()
+    user = session.query(User).filter(User.nickname == nick).first()
+    if user:
+        abort(400, message=f"User with nickname '{nick}' already exists")
+
+
+def abort_if_email_not_unique(email):
+    session = db_session.create_session()
+    user = session.query(User).filter(User.nickname == email).first()
+    if user:
+        abort(400, message=f"User with email '{email}' already exists")
+
+
 class UsersResource(Resource):
     def get(self, user_id):
         abort_if_user_not_found(user_id)
@@ -35,20 +49,25 @@ class UsersResource(Resource):
     def put(self, user_id):
         abort_if_user_not_found(user_id)
         parser = reqparse.RequestParser()
-        # а нужно ли добавлять возможность так сменить ник и почту?
-        # опасненько как-то, ибо он же уникальный, ошибочки будут
+        parser.add_argument('nickname', required=False)
+        parser.add_argument('email', required=False)
         parser.add_argument('surname', required=False)
         parser.add_argument('name', required=False)
         parser.add_argument('age', required=False, type=int)
         parser.add_argument('about', required=False)
         parser.add_argument('achievements', required=False)
         parser.add_argument('password', required=False)
-        parser.add_argument('email', required=False)
         args = parser.parse_args()
 
         session = db_session.create_session()
         user = session.query(User).get(user_id)
 
+        abort_if_email_not_unique(args['email'])
+        abort_if_nick_not_unique(args['nickname'])
+        if args['nickname']:
+            user.nickname = args['nickname']
+        if args['email']:
+            user.email = args['email']
         if args['surname']:
             user.surname = args['surname']
         if args['name']:
@@ -80,16 +99,18 @@ class UsersListResource(Resource):
 
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('nickname', required=False)
+        parser.add_argument('nickname', required=True)
         parser.add_argument('surname', required=False)
         parser.add_argument('name', required=False)
         parser.add_argument('age', required=False, type=int)
         parser.add_argument('about', required=False)
-        parser.add_argument('email', required=False)
-        parser.add_argument('password', required=False)
+        parser.add_argument('email', required=True)
+        parser.add_argument('password', required=True)
         args = parser.parse_args()
 
-        # ошибочки сыпятся в сучае неуникальности почты/ника
+        abort_if_email_not_unique(args['email'])
+        abort_if_nick_not_unique(args['nickname'])
+
         session = db_session.create_session()
         user = User(
             nickname=args['nickname'],

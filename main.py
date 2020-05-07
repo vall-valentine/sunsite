@@ -97,12 +97,15 @@ def shop():
     return render_template('shop.html', title='Shop')
 
 
-@app.route("/<nickname>")
+@app.route("/users/<nickname>")
 def user_page(nickname):
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
-    user = session.query(User)
-    return render_template('user_page.html', title=f'{nickname}')
+    user = session.query(User).filter(User.nickname == nickname).first()
+    print(nickname)
+    return render_template('user_page.html', title=f'{nickname}', nickname=nickname,
+                           surname=user.surname, name=user.name, about=user.about,
+                           age=user.age, acievements=user.achievements)
 
 
 @app.route("/chats")

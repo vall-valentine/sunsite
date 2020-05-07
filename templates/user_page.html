@@ -1,5 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/reset.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main_style.css')}}">
+<div class="index">
 
+    <div class="user_info">
+        <span class="message">Страница пользователя {{ nickname }}</span>
+            <table>
+                <tr>
+                    <td><span>Имя</span></td>
+                    <td><span>{{ name }}</span></td>
+                </tr>
+                <tr>
+                    <td><span>Фамилия</span></td>
+                    <td><span>{{ surname }}</span></td>
+                </tr>
+                <tr>
+                    <td><span>Возраст</span></td>
+                    <td><span>{{ age }}</span></td>
+                </tr>
+                <tr>
+                    <td><span>О себе</span></td>
+                    <td><span>{{ about }}</span></td>
+                </tr>
+                <tr>
+                    <td><span>Достижения</span></td>
+                    <td>
+                        <span>123</span>
+                    </td>
+                </tr>
+            </table>
+    </div>
+</div>
 {% endblock %}

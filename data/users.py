@@ -24,6 +24,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                       default=datetime.datetime.now)
 
+    posts = orm.relation("Posts", back_populates='user')
+
     def __repr__(self):
         return f"<User> {self.id} {self.surname} {self.name}"
 

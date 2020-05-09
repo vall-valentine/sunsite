@@ -1,8 +1,7 @@
-import json
 import os
 import shutil
 
-from flask import Flask, request
+from flask import Flask, request, abort
 from flask import redirect
 from flask import render_template
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -13,7 +12,7 @@ from data import db_session
 from data.users import User
 from forms.forms import RegisterForm, LoginForm, EditUserForm
 
-PROJECT_ROOT = 'C:/Users/kupco/Desktop/Project-3'
+PROJECT_ROOT = 'path/to/the/project'
 UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'static/img')
 
 app = Flask(__name__)
@@ -120,23 +119,31 @@ def shop():
 
 
 @app.route("/users/<nickname>", methods=['GET', 'POST'])
+@login_required
 def user_page(nickname):
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
+
     user = session.query(User).filter(User.nickname == nickname).first()
+    if not user:
+        return abort(404)
 
     form = EditUserForm()
     user_image = 'user.png'
+    message = ""
 
     if user.photo:
-        photo_path = nickname + "_" + user.photo_name
-        with open(photo_path, 'wb') as user_photo:
-            user_photo.write(user.photo)
-        file_flag = os.path.exists(os.path.join(UPLOAD_FOLDER, photo_path))
-        if file_flag:
-            os.remove(os.path.join(UPLOAD_FOLDER, photo_path))
-        shutil.move(os.path.join(PROJECT_ROOT, photo_path), UPLOAD_FOLDER)
-        user_image = photo_path
+        try:
+            photo_path = nickname + "_" + user.photo_name
+            with open(photo_path, 'wb') as user_photo:
+                user_photo.write(user.photo)
+            file_flag = os.path.exists(os.path.join(UPLOAD_FOLDER, photo_path))
+            if file_flag:
+                os.remove(os.path.join(UPLOAD_FOLDER, photo_path))
+            shutil.move(os.path.join(PROJECT_ROOT, photo_path), UPLOAD_FOLDER)
+            user_image = photo_path
+        except PermissionError:
+            message = "Не удалось загрузить фото"
 
     if form.validate_on_submit():
         body = {'surname': form.surname_input.data,
@@ -144,15 +151,16 @@ def user_page(nickname):
                 'about': form.about_input.data,
                 'age': form.age_input.data}
         if form.photo.data:
-            body['photo'] = "-".join([str(byte) for byte in form.photo.data.read()])
+            photo_data = request.files.getlist("photo")[-1]
+            body['photo'] = "-".join([str(byte) for byte in photo_data.read()])
             body['photo_name'] = form.photo.data.filename
-        put(f'http://localhost:8001/api/users/{current_user.id}', json=body)
+        put(f'http://localhost:8080/api/users/{current_user.id}', json=body)
 
         return redirect(f'users/{nickname}')
 
     return render_template('user_page.html', title=f'{nickname}', nickname=nickname,
                            surname=user.surname, name=user.name, about=user.about,
-                           age=user.age, user=user, image=user_image, form=form)
+                           age=user.age, user=user, image=user_image, form=form, message=message)
 
 
 @app.route("/chats")
@@ -166,4 +174,4 @@ def chats():
 
 if __name__ == '__main__':
     db_session.global_init("db/database.sqlite")
-    app.run(port=8001, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')

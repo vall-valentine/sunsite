@@ -11,6 +11,7 @@
             <div class="img">
                 <img src="{{url_for('static', filename='img/' + image)}}" alt="Аватар">
                 <input form="edit_form" type="file" name="photo" class="img_btn" id="file" accept=".jpg, .jpeg, .png">
+                <div> {{ message }}</div>
             </div>
             <div class="to_achivs" onclick="redirect('achivements')">Достижения</div>
         </div>
@@ -67,8 +68,8 @@
                         <span class="answer">{{ about }}</span>
                     </div>
                 </div>
+            </form>
         </div>
-        </form>
         <div class="posts">
         </div>
     </div>

@@ -13,7 +13,6 @@ def abort_if_post_not_found(post_id):
         abort(404, message=f"Post {post_id} not found")
 
 
-# займись этим наконец!!!
 class PostsResource(Resource):
     def get(self, post_id):
         abort_if_post_not_found(post_id)
@@ -52,7 +51,6 @@ class PostsResource(Resource):
         return jsonify({'success': 'OK'})
 
 
-# сиди давай ровняй всё
 class PostsListResource(Resource):
     def get(self):
         session = db_session.create_session()

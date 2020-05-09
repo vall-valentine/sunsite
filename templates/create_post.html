@@ -1,0 +1,26 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="create_post">
+    <span class="message">{{ title }}</span>
+    <form method="POST" action="{{url_for('create_post')}}">
+        {{ form_cr.hidden_tag() }}
+        <input type="text" name="title" placeholder="Введите название статьи" class="inp_title"><br>
+        {% for error in form_cr.title.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endfor %}
+        <!-- вообще не знаю что сюда, но нужно что-то пошире input'а, либо его увеличить -->
+        <input type="text" name="content" placeholder="Введите содержание поста" class="inp_post"><br>
+        {% for error in form_cr.content.errors %}
+        <div class="alert_message">
+            {{ error }}
+        </div>
+        {% endfor %}
+        <button class="submit" type="submit" value="cr_post" name="btn_cr_post">Создать</button>
+        <div class="alert_message">{{ message_log }}</div>
+    </form>
+</div>
+{% endblock %}

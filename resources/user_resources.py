@@ -2,7 +2,6 @@ from flask import jsonify
 from flask_restful import reqparse, abort, Resource
 
 from data import db_session
-
 from data.users import User
 
 
@@ -50,6 +49,8 @@ class UsersResource(Resource):
         abort_if_user_not_found(user_id)
         parser = reqparse.RequestParser()
         parser.add_argument('nickname', required=False)
+        parser.add_argument('photo', required=False)
+        parser.add_argument('photo_name', required=False)
         parser.add_argument('email', required=False)
         parser.add_argument('surname', required=False)
         parser.add_argument('name', required=False)
@@ -82,6 +83,11 @@ class UsersResource(Resource):
             user.age = args['age']
         if args['password']:
             user.set_password(args['password'])
+        if args['photo']:
+            byte_array_my = bytes([int(num) for num in args['photo'].split('-')])
+            user.photo = byte_array_my
+        if args['photo_name']:
+            user.photo_name = args['photo_name']
 
         session.commit()
         return jsonify({'success': 'OK'})

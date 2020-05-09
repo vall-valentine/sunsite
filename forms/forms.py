@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, SubmitField, TextAreaField, PasswordField, IntegerField, BooleanField
+from wtforms import StringField, SubmitField, TextAreaField, PasswordField, IntegerField, BooleanField, FileField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Email
 
@@ -16,3 +16,11 @@ class LoginForm(FlaskForm):
     email = StringField("E-mail: ", validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
+
+
+class EditUserForm(FlaskForm):
+    name_input = StringField("Name")
+    surname_input = StringField("Surname")
+    age_input = IntegerField("Age")
+    about_input = StringField("About")
+    photo = FileField("Photo")

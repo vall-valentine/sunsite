@@ -50,9 +50,6 @@ print(get('http://localhost:8080/api/users').json())
 # Некорректный запрос: такого пользователя нет
 print(get('http://localhost:8080/api/users/1000').json())
 
-# Некорректный запрос: некорректный тип данных
-print(get('http://localhost:8080/api/users/one').json())
-
 # Вывод информации об одном пользователе
 print(get('http://localhost:8080/api/users/1').json())
 

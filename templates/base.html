@@ -16,7 +16,7 @@
         <div class="punct" onclick="redirect('/index')"><span>Лента</span></div>
         <div class="punct" onclick="redirect('/chats')"><span>Чаты</span></div>
         <div class="punct" onclick="redirect('/shop')"><span>Магазин</span></div>
-        <div class="punct" onclick="redirect('/{{current_user.nickname}}')"><span>Пользователь</span></div>
+        <div class="punct" onclick="redirect('/users/{{current_user.nickname}}')"><span>Профиль</span></div>
         <div class="punct" onclick="redirect('/logout')"><span>Выход</span></div>
     </div>
     {% else %}

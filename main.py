@@ -11,6 +11,7 @@ from conf.routes import generate_routes
 from data import db_session
 from data.posts import Posts
 from data.users import User
+from data.comments import Comments
 from forms.forms import RegisterForm, LoginForm, PostForm
 
 app = Flask(__name__)

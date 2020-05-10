@@ -12,7 +12,7 @@ from data import db_session
 from data.posts import Posts
 from data.users import User
 from data.comments import Comments
-from forms.forms import RegisterForm, LoginForm, PostForm
+from forms.forms import RegisterForm, LoginForm, PostForm, CommentsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -185,6 +185,28 @@ def edit_post(post_id):
 def delete_post(post_id):
     delete(f'http://localhost:8080/api/posts/{post_id}')
     return redirect('/')
+
+
+@app.route("/post/<int:post_id>", methods=['GET', 'POST'])
+def post_page(post_id):
+    form = CommentsForm()
+    if form.validate_on_submit():
+        post('http://localhost:8080/api/comments', json={
+            'post_id': form.post_id.data,
+            'content': form.content.data,
+            'author': current_user.id
+        })
+        return redirect(f'post/{post_id}')
+    return render_template('post_page.html', title='Пост', form=form)
+
+
+@app.route("/delete_comm/<int:comm_id>", methods=['GET', 'POST'])
+def delete_comm(comm_id):
+    cur_post = get(f'http://localhost:8080/api/comments/{comm_id}')['comment']['post_id']
+    delete('http://localhost:8080/api/comments', json={
+            'comm_id': comm_id
+        })
+    return redirect(f'post/{cur_post}')
 
 
 if __name__ == '__main__':

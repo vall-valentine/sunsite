@@ -30,20 +30,6 @@ class CommentResource(Resource):
         session.commit()
         return jsonify({'success': 'OK'})
 
-    def put(self, comm_id):
-        abort_if_comm_not_found(comm_id)
-        parser = reqparse.RequestParser()
-        parser.add_argument('content', required=False)
-        args = parser.parse_args()
-
-        session = db_session.create_session()
-        comm = session.query(Comments).get(comm_id)
-
-        if args['content']:
-            comm.content = args['content']
-        session.commit()
-        return jsonify({'success': 'OK'})
-
 
 class CommentsListResource(Resource):
     def get(self):

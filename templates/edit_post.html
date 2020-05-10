@@ -3,16 +3,18 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/edit.css')}}">
 <div class="edit_post">
-    <form method="POST" action="{{url_for('create_post')}}">
+    <form method="POST" action="">
         {{ form_cr.hidden_tag() }}
-        <input type="text" name="title" placeholder="Введите название статьи" class="inp_title">
+        <input value="{{ form_cr.title.data }}" type="text" name="title" placeholder="Введите название статьи"
+               class="inp_title">
         {% for error in form_cr.title.errors %}
         <div class="error_handler">
             {{ error }}
         </div>
         {% endfor %}
         <div>
-            <textarea type="text" name="content" placeholder="Ваша статья" class="inp_post"></textarea>
+            <textarea type="text" name="content" placeholder="Ваша статья"
+                      class="inp_post">{{ form_cr.content.data }}</textarea>
         </div>
         {% for error in form_cr.content.errors %}
         <div class="error_handler">

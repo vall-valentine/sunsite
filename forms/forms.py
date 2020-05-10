@@ -22,4 +22,4 @@ class PostForm(FlaskForm):
 
 
 class CommentsForm(FlaskForm):
-    content = TextAreaField("Content: ", validators=[DataRequired()])
+    comm_input = TextAreaField("Content: ", validators=[DataRequired()])

@@ -40,6 +40,7 @@ def feed():
                            cur_page=cur_page, max_page=max_page)
 
 
+@login_required
 @app.route("/feed/page/<int:page_num>")
 def page(page_num):
     db_session.global_init("db/database.sqlite")
@@ -57,6 +58,28 @@ def page(page_num):
 
     return render_template("feed.html", posts=posts_on_page, users=users,
                            cur_page=cur_page, max_page=max_page)
+
+
+@login_required
+@app.route("/posts/<int:post_id>", methods=['GET', 'POST'])
+def open_post(post_id):
+    db_session.global_init("db/database.sqlite")
+    session = db_session.create_session()
+    users = session.query(User).all()
+    form = CommentsForm()
+    comments = list(reversed(session.query(Comments).filter(Comments.post_id == post_id).all()))
+    postik = session.query(Posts).filter(Posts.id == post_id).first()
+    if not postik:
+        abort(404)
+
+    if request.method == "POST":
+        post('http://localhost:8080/api/comments', json={
+            'post_id': post_id,
+            'content': form.comm_input.data,
+            'author': current_user.id
+        })
+        return redirect(f'/posts/{post_id}')
+    return render_template("post.html", post=postik, users=users, comments=comments)
 
 
 @login_manager.user_loader
@@ -146,6 +169,7 @@ def chats():
     return render_template('chats.html', title='Chats')
 
 
+@login_required
 @app.route("/create_post", methods=['GET', 'POST'])
 def create_post():
     form_cr = PostForm()
@@ -153,12 +177,13 @@ def create_post():
         post('http://localhost:8080/api/posts', json={
             'title': form_cr.title.data,
             'content': form_cr.content.data,
-            'author': current_user.id
+            'author': 1
         })
-        return redirect('/')
+        return redirect('/feed')
     return render_template('create_post.html', title='Создание поста', form_cr=form_cr)
 
 
+@login_required
 @app.route("/edit_post/<int:post_id>", methods=['GET', 'POST'])
 def edit_post(post_id):
     form_cr = PostForm()
@@ -169,15 +194,15 @@ def edit_post(post_id):
             form_cr.content.data = posts['content']
         else:
             return abort(404)
-    if form_cr.validate_on_submit():
+    if request.method == "POST":
         db_session.global_init("db/database.sqlite")
-        put('http://localhost:8080/api/posts', json={
+        put(f'http://localhost:8080/api/posts/{post_id}', json={
             'title': form_cr.title.data,
             'content': form_cr.content.data,
             'author': current_user.id
         })
-        return redirect('/')
-    return render_template('create_post.html', title='Редактирование поста', form_cr=form_cr)
+        return redirect('/feed')
+    return render_template('edit_post.html', title='Редактирование поста', form_cr=form_cr)
 
 
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
@@ -187,26 +212,13 @@ def delete_post(post_id):
     return redirect('/')
 
 
-@app.route("/post/<int:post_id>", methods=['GET', 'POST'])
-def post_page(post_id):
-    form = CommentsForm()
-    if form.validate_on_submit():
-        post('http://localhost:8080/api/comments', json={
-            'post_id': form.post_id.data,
-            'content': form.content.data,
-            'author': current_user.id
-        })
-        return redirect(f'post/{post_id}')
-    return render_template('post_page.html', title='Пост', form=form)
-
-
 @app.route("/delete_comm/<int:comm_id>", methods=['GET', 'POST'])
 def delete_comm(comm_id):
-    cur_post = get(f'http://localhost:8080/api/comments/{comm_id}')['comment']['post_id']
+    cur_post = get(f'http://localhost:8080/api/comments/{comm_id}').json()['comment']['post_id']
     delete('http://localhost:8080/api/comments', json={
             'comm_id': comm_id
         })
-    return redirect(f'post/{cur_post}')
+    return redirect(f'posts/{cur_post}')
 
 
 if __name__ == '__main__':

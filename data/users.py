@@ -26,6 +26,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     photo = sqlalchemy.Column(sqlalchemy.BLOB, nullable=True)
     photo_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
+    posts = orm.relation("Posts", back_populates='user')
+    comms = orm.relation("Comments", back_populates='user')
+
     def __repr__(self):
         return f"<User> {self.id} {self.surname} {self.name}"
 

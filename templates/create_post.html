@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/edit.css')}}">
+<div class="edit_post">
+    <form method="POST" action="{{url_for('create_post')}}">
+        {{ form_cr.hidden_tag() }}
+        <input type="text" name="title" placeholder="Введите название статьи" class="inp_title">
+        {% for error in form_cr.title.errors %}
+        <div class="error_handler">
+            {{ error }}
+        </div>
+        {% endfor %}
+        <div>
+            <textarea type="text" name="content" placeholder="Ваша статья" class="inp_post"></textarea>
+        </div>
+        {% for error in form_cr.content.errors %}
+        <div class="error_handler">
+            {{ error }}
+        </div>
+        {% endfor %}
+        <div class="btn_div">
+            <button type="submit" value="cr_post" name="btn_cr_post" class="sub_btn">Создать</button>
+        </div>
+        <div class="alert_message">{{ message_log }}</div>
+    </form>
+</div>
+{% endblock %}

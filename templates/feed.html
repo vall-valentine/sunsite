@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/feed.css')}}">
+<div class="lenta">
+    {% if current_user.is_authenticated %}
+    <form action="../../create_post">
+        <button class="create_post"><span>Создать пост</span></button>
+    </form>
+    {% endif %}
+
+    {% for post in posts %}
+    <div class="post" onclick="redirect('../../posts/{{post.id}}')">
+        {% for user in users %}
+        {% if user.id == post.author %}
+        <div class="post_top">
+            <span class="title">{{ post.title }}</span>
+            <div class="buttons">
+                <form action="../../posts/{{ post.id }}" method="get">
+                    <button class="comments">
+                        <img src="https://img.icons8.com/carbon-copy/100/000000/comments.png" width="100%"/>
+                    </button>
+                </form>
+                {% if current_user.id == user.id %}
+                <form action="../../edit_post/{{ post.id }}">
+                    <button class="edit">
+                        <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>
+                    </button>
+                </form>
+                <form action="../../delete_post/{{post.id}}">
+                    <button class="delete">
+                        <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="post_middle">
+            <span class="author">Автор: <a href="../../users/{{ user.nickname }}">{{ user.nickname }}</a></span>
+            <span class="date"> {{ post.created_date.strftime('%H:%m %d/%m/%Y') }} </span>
+        </div>
+        <div class="content">{{ post.content }}</div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+</div>
+<hr>
+<div class="pages">
+    {% if cur_page != 1 %}
+    <a class="btn_href" href="/feed/page/{{ cur_page - 1 }}">Предыдущая</a>
+    {% endif %}
+    {% if cur_page == 1 %}
+    <a href="/feed/page/1" class="cur_btn_href">1</a>
+    {% else %}
+    <a href="/feed/page/1">1</a>
+    {% endif %}
+    {% if cur_page >= 5 %}
+    <span>...</span>
+    {% endif %}
+    {% if cur_page >= 4 %}
+    <a href="/feed/page/{{ cur_page - 2 }}">{{ cur_page - 2 }}</a>
+    {% endif %}
+    {% if cur_page >= 3 %}
+    <a href="/feed/page/{{ cur_page - 1 }}">{{ cur_page - 1 }}</a>
+    {% endif %}
+    {% if cur_page != 1 and cur_page != max_page %}
+    <a href="/feed/page/{{ cur_page }}" class="cur_btn_href">{{ cur_page }}</a>
+    {% endif %}
+    {% if cur_page + 2 <= max_page %}
+    <a href="/feed/page/{{ cur_page + 1 }}">{{ cur_page + 1 }}</a>
+    {% endif %}
+    {% if cur_page + 3 <= max_page %}
+    <a href="/feed/page/{{ cur_page + 2 }}">{{ cur_page + 2 }}</a>
+    {% endif %}
+    {% if cur_page + 4 <= max_page %}
+    <span>...</span>
+    {% endif %}
+    {% if max_page > 1 %}
+    {% if max_page == cur_page %}
+    <a href="/feed/page/{{ max_page }}" class="cur_btn_href">{{ max_page }}</a>
+    {% else %}
+    <a href="/feed/page/{{ max_page }}">{{ max_page }}</a>
+    {% endif %}
+    {% endif %}
+    {% if cur_page != max_page %}
+    <a class="btn_href" href="/feed/page/{{ cur_page + 1 }}">Следующая</a>
+    {% endif %}
+</div>
+<hr>
+{% endblock %}

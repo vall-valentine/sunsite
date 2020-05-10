@@ -1,30 +1,23 @@
+import math
 import os
 import shutil
-
-from flask import Flask, request, abort
-from flask import redirect
-import math
 
 from flask import Flask, abort
 from flask import redirect
 from flask import render_template
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from requests import post, put
-
-from conf.routes import generate_routes
 from flask import request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from requests import get, post, put, delete
 
 from conf.routes import generate_routes
 from data import db_session
+from data.comments import Comments
 from data.posts import Posts
 from data.users import User
-from data.comments import Comments
-from forms.forms import RegisterForm, LoginForm, PostForm, CommentsForm
+from forms.forms import PostForm, CommentsForm
 from forms.forms import RegisterForm, LoginForm, EditUserForm
 
-PROJECT_ROOT = 'path/to/the/project'
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'static/img')
 
 app = Flask(__name__)

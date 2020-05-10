@@ -13,7 +13,7 @@
         {% if current_user.is_authenticated %}
         <div class="punct"><img src="{{url_for('static', filename='img/ulitka.png')}}" alt="logo" width="120px"
                                 height="70px"></div>
-        <div class="punct" onclick="redirect('/index')"><span>Лента</span></div>
+        <div class="punct" onclick="redirect('/feed')"><span>Лента</span></div>
         <div class="punct" onclick="redirect('/chats')"><span>Чаты</span></div>
         <div class="punct" onclick="redirect('/shop')"><span>Магазин</span></div>
         <div class="punct" onclick="redirect('/{{current_user.nickname}}')"><span>Пользователь</span></div>

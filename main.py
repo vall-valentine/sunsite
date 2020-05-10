@@ -1,15 +1,17 @@
-from flask import Flask
+import math
+
+from flask import Flask, abort
+from flask import redirect
 from flask import render_template
+from flask import request
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from requests import get, post, put, delete
+
+from conf.routes import generate_routes
 from data import db_session
+from data.posts import Posts
 from data.users import User
 from forms.forms import RegisterForm, LoginForm, PostForm
-from flask import redirect
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from conf.routes import generate_routes
-from data.posts import Posts
-from requests import get, post, put, delete
-from flask import request
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -19,32 +21,41 @@ login_manager.init_app(app)
 
 generate_routes(app)
 
-global flag
-flag = True
 
-
-@app.route("/")
-@app.route("/index")
-def index():
-    global n, flag
-    if flag:
-        n = 1
-
+@app.route("/", methods=["GET", "POST"])
+@app.route("/feed", methods=["GET", "POST"])
+def feed():
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
+
     al = session.query(Posts).order_by(Posts.created_date).all()
-    posts = list(reversed(al[n * -10:]))
+    posts = list(reversed(al[1 * -10:]))
     users = session.query(User)
-    flag = True
-    return render_template("index.html", posts=posts, users=users)
+
+    cur_page = 1
+    max_page = math.ceil(len(al) / 10)
+
+    return render_template("feed.html", posts=posts, users=users,
+                           cur_page=cur_page, max_page=max_page)
 
 
-@app.route("/more")
-def more():
-    global n, flag
-    n += 1
-    flag = False
-    return redirect('/')
+@app.route("/feed/page/<int:page_num>")
+def page(page_num):
+    db_session.global_init("db/database.sqlite")
+    session = db_session.create_session()
+    users = session.query(User)
+    posts = list(reversed(session.query(Posts).order_by(Posts.created_date).all()))
+    max_page = math.ceil(len(posts) / 10)
+
+    if page_num < 1 or page_num > max_page:
+        return abort(404)
+
+    cur_page = page_num
+
+    posts_on_page = posts[(page_num - 1) * 10:page_num * 10]
+
+    return render_template("feed.html", posts=posts_on_page, users=users,
+                           cur_page=cur_page, max_page=max_page)
 
 
 @login_manager.user_loader
@@ -93,7 +104,7 @@ def login():
         session = db_session.create_session()
         user = session.query(User).filter(User.email == form_log.email.data).first()
         if user and user.check_password(form_log.password.data):
-            login_user(user, remember=form_log.remember_me.data)
+            login_user(user, remember=True)
             return redirect("/")
         return render_template('login.html',
                                message_log="Неправильный логин или пароль",
@@ -121,7 +132,6 @@ def user_page(nickname):
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
     user = session.query(User).filter(User.nickname == nickname).first()
-    print(nickname)
     return render_template('user_page.html', title=f'{nickname}', nickname=nickname,
                            surname=user.surname, name=user.name, about=user.about,
                            age=user.age, acievements=user.achievements)
@@ -139,13 +149,11 @@ def chats():
 def create_post():
     form_cr = PostForm()
     if form_cr.validate_on_submit():
-        res = post('http://localhost:8080/api/posts', json=
-                   {
-                        'title': form_cr.title.data,
-                        'content': form_cr.content.data,
-                        'author': current_user.id
-                   }
-                   ).json()
+        post('http://localhost:8080/api/posts', json={
+            'title': form_cr.title.data,
+            'content': form_cr.content.data,
+            'author': current_user.id
+        })
         return redirect('/')
     return render_template('create_post.html', title='Создание поста', form_cr=form_cr)
 
@@ -155,21 +163,18 @@ def edit_post(post_id):
     form_cr = PostForm()
     if request.method == "GET":
         posts = get(f'http://localhost:8080/api/posts/{post_id}').json()['post']
-        print(posts)
         if (posts['author'] == current_user.id) and posts:
             form_cr.title.data = posts['title']
             form_cr.content.data = posts['content']
         else:
-            return 404
+            return abort(404)
     if form_cr.validate_on_submit():
         db_session.global_init("db/database.sqlite")
-        res = put('http://localhost:8080/api/posts', json=
-                  {
-                       'title': form_cr.title.data,
-                       'content': form_cr.content.data,
-                       'author': current_user.id
-                  }
-                  ).json()
+        put('http://localhost:8080/api/posts', json={
+            'title': form_cr.title.data,
+            'content': form_cr.content.data,
+            'author': current_user.id
+        })
         return redirect('/')
     return render_template('create_post.html', title='Редактирование поста', form_cr=form_cr)
 
@@ -177,7 +182,7 @@ def edit_post(post_id):
 @app.route('/delete_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def delete_post(post_id):
-    posts = delete(f'http://localhost:8080/api/posts/{post_id}').json()
+    delete(f'http://localhost:8080/api/posts/{post_id}')
     return redirect('/')
 
 

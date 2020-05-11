@@ -1,5 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-<iframe width="914" height="514" src="https://www.youtube.com/embed/aZenmeRytEM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<form action="../../create_chat">
+        <button class="create_chat"><span>Начать чат</span></button>
+</form>
+
+<span>Ваши чаты с:</span>
+{% for chat in chats %}
+<div class="chats" onclick="redirect('../../chats/{{chat.id}}')">
+    {% for user in users %}
+    {% if user.id in chat['users']%}
+    <span>{{ user.nickname }}</span>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endfor %}
+
 {% endblock %}

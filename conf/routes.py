@@ -2,6 +2,8 @@ from resources.error_handler import page_not_found
 from resources.user_resources import UsersResource, UsersListResource
 from resources.post_resources import PostsResource, PostsListResource
 from resources.comments_resourses import CommentResource, CommentsListResource
+from resources.chats_resources import ChatResource, ChatsListResource
+from resources.messages_resource import MessageResource, MessagesListResource
 
 from flask_restful import Api
 
@@ -18,3 +20,10 @@ def generate_routes(app):
 
     api.add_resource(CommentsListResource, '/api/comments')
     api.add_resource(CommentResource, '/api/comments/<int:comm_id>')
+
+    api.add_resource(ChatsListResource, '/api/chats')
+    api.add_resource(ChatResource, '/api/chats/<int:chat_id>')
+
+    api.add_resource(MessagesListResource, '/api/messages')
+    api.add_resource(MessageResource, '/api/messages/<int:mess_id>')
+

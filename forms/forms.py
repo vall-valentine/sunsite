@@ -33,3 +33,11 @@ class EditUserForm(FlaskForm):
     age_input = IntegerField("Age")
     about_input = StringField("About")
     photo = FileField("Photo")
+
+
+class ChatsForm(FlaskForm):
+    users = StringField("Users: ", validators=[DataRequired()])
+
+
+class MessageForm(FlaskForm):
+    content = StringField("Content: ", validators=[DataRequired()])

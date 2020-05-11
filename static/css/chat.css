@@ -1,0 +1,7 @@
+.chat {
+height: 500px;
+width: 100%;
+background: #fff;
+border: 1px solid #C1C1C1;
+overflow-y: scroll;
+}

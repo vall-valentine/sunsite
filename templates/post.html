@@ -5,6 +5,7 @@
     <div class="post_top">
         <span class="title">{{ post.title }}</span>
         <div class="buttons">
+            {% if curr%}
             <form action="../../edit_post/{{ post.id }}">
                 <button class="edit">
                     <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>

@@ -2,6 +2,7 @@ from flask import jsonify
 from flask_restful import reqparse, abort, Resource
 
 from data import db_session
+from data.chats import Chats
 from data.users import User
 
 
@@ -130,3 +131,16 @@ class UsersListResource(Resource):
         session.add(user)
         session.commit()
         return jsonify({'success': 'OK'})
+
+
+class ChatByUserResource(Resource):
+    def get(self, user_id):
+        abort_if_user_not_found(user_id)
+        session = db_session.create_session()
+        all_chats = session.query(Chats).all()
+        chats_list = []
+        for ch in all_chats:
+            if user_id in [int(_) for _ in ch.users.split()]:
+                chats_list.append([ch.id, [int(user) for user in ch.users.split()]])
+
+        return jsonify({'chats': chats_list})

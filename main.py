@@ -11,15 +11,15 @@ from requests import get, post, put, delete
 
 from conf.routes import generate_routes
 from data import db_session
+from data.chats import Chats
 from data.comments import Comments
+from data.messages import Messages
 from data.posts import Posts
 from data.users import User
-from data.chats import Chats
-from data.messages import Messages
 from forms.forms import PostForm, CommentsForm, ChatsForm, MessageForm
 from forms.forms import RegisterForm, LoginForm, EditUserForm
 
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = 'C:/Users/kupco/Desktop/Project-3'
 UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'static/img')
 
 app = Flask(__name__)
@@ -238,8 +238,7 @@ def user_page(nickname):
             user_image = photo_path
         except PermissionError:
             message = "Не удалось загрузить фото"
-
-    if form.validate_on_submit():
+    if request.method == "POST":
         body = {'surname': form.surname_input.data,
                 'name': form.name_input.data,
                 'about': form.about_input.data,
@@ -250,9 +249,9 @@ def user_page(nickname):
             body['photo_name'] = form.photo.data.filename
         put(f'http://localhost:8080/api/users/{current_user.id}', json=body)
 
-        return redirect(f'../../users/{user.nickname}')
+        return redirect(f'users/{user.nickname}')
 
-    return render_template('user_page.html', title=f'{nickname}', nickname=nickname,
+    return render_template('user_page.html', title=nickname, nickname=nickname,
                            surname=user.surname, name=user.name, about=user.about,
                            age=user.age, user=user, image=user_image, form=form, message=message)
 
@@ -263,17 +262,12 @@ def chats():
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
     users = session.query(User).all()
-    all_chats = get(f'http://localhost:8080/api/chats').json()['chats']
-    chats_list = []
-    for ch in all_chats:
-        if current_user.id in [int(_) for _ in ch['users'].split()]:
-            ch['users'] = [int(_) for _ in ch['users'].split() if int(_) != current_user.id]
-            chats_list.append(ch)
-    return render_template('chats.html', title='Чаты', chats=chats_list, users=users)
+    chats_for_page = get(f'http://localhost:8080/api/users/{current_user.id}/chats').json()['chats']
+    return render_template('chats.html', title='Чаты', chats=chats_for_page, users=users, model=User)
 
 
-@login_required
 @app.route("/chats/<int:chat_id>", methods=['POST', 'GET'])
+@login_required
 def chat(chat_id):
     db_session.global_init("db/database.sqlite")
     session = db_session.create_session()
@@ -290,8 +284,8 @@ def chat(chat_id):
     return render_template('chat.html', title='Чаты', messages=messages, users=users, chat_id=chat_id)
 
 
-@login_required
 @app.route("/create_chat", methods=['GET', 'POST'])
+@login_required
 def create_chat():
     form = ChatsForm()
     if request.method == "POST":
@@ -304,24 +298,25 @@ def create_chat():
                  'users': str(users.id) + ' ' + str(current_user.id)})
             ch = session.query(Chats).all()[-1]
             post('http://localhost:8080/api/messages', json={
-                'author': 4,  # !нужно сделать первым пользователя с ником админ!! пока он 4
+                'author': 1,
                 'content': f'<user {current_user.nickname} added>',
                 'chat': ch.id
             })
             post('http://localhost:8080/api/messages', json={
-                'author': 4,  # !нужно сделать первым пользователя с ником админ!! пока он 4
+                'author': 1,
                 'content': f'<user {users.nickname} added>',
                 'chat': ch.id
             })
         else:
-            return "Такого пользователя нет"
+            return render_template('create_chat.html', title="Создание поста",
+                                   form=form, message="Такого пользователя нет!")
 
         return redirect('/feed')
     return render_template('create_chat.html', title='Создание чата', form=form)
 
 
-@login_required
 @app.route("/edit_chat/<int:chat_id>", methods=['GET', 'POST'])
+@login_required
 def edit_chat(chat_id):
     form = ChatsForm()
     if request.method == "POST":
@@ -335,7 +330,7 @@ def edit_chat(chat_id):
                  'users': already + ' ' + str(users.id)})
             ch = session.query(Chats).filter(Chats.id == chat_id).first()
             post('http://localhost:8080/api/messages', json={
-                'author': 4,  # !нужно сделать первым пользователя с ником админ!! пока он 4
+                'author': 1,
                 'content': f'<user {users.nickname} added>',
                 'chat': ch.id
             })
@@ -347,15 +342,15 @@ def edit_chat(chat_id):
                            act=f"{{url_for(f'edit_chat/{chat_id}')}}")
 
 
-@login_required
 @app.route("/delete_chat/<int:chat_id>", methods=['GET', 'POST'])
+@login_required
 def delete_chat(chat_id):
     delete(f'http://localhost:8080/api/chats/{chat_id}')
     return redirect(f'../../chats')
 
 
-@login_required
 @app.route("/delete_mess/<int:mess_id>", methods=['GET', 'POST'])
+@login_required
 def delete_mess(mess_id):
     cur_chat = get(f'http://localhost:8080/api/messages/{mess_id}').json()['message']['chat']
     delete(f'http://localhost:8080/api/messages/{mess_id}')

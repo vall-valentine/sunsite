@@ -112,7 +112,7 @@
     font-size: 24px;
     color: #424242;
     align-self: flex-start;
-    white-space: normal;
+    white-space: pre-wrap;
     width: 100%;
 }
 

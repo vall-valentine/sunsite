@@ -5,14 +5,10 @@
         <button class="create_chat"><span>Начать чат</span></button>
 </form>
 
-<span>Ваши чаты с:</span>
+<span>Ваши чаты:</span>
 {% for chat in chats %}
-<div class="chats" onclick="redirect('../../chats/{{chat.id}}')">
-    {% for user in users %}
-    {% if user.id in chat['users']%}
-    <span>{{ user.nickname }}</span>
-    {% endif %}
-    {% endfor %}
+<div class="chats" onclick="redirect('../../chats/{{chat[0]}}')">
+    <span>{{ chat[0] }}</span>
 </div>
 {% endfor %}
 

@@ -28,6 +28,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     posts = orm.relation("Posts", back_populates='user')
     comms = orm.relation("Comments", back_populates='user')
+    messages = orm.relation("Messages", back_populates='user')
 
     def __repr__(self):
         return f"<User> {self.id} {self.surname} {self.name}"

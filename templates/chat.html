@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/chat.css')}}">
+
+<form action="../../delete_chat/{{ chat_id }}">
+    <button class="del">
+        <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="40%"/>
+    </button>
+</form>
+<form action="../../edit_chat/{{chat_id}}">
+    <button class="delete">
+        <span>Добавить участника</span>
+    </button>
+</form>
+<form class="mess" method="post" action="">
+    <textarea class="content" name="content" placeholder="Введите сообщение"></textarea>
+    <button class="send" type="submit">Отправить</button>
+</form>
+<div class="chat">
+    <div class="messages">
+        {% for mess in messages %}
+        {% for user in users %}
+        {% if user.id == mess.author %}
+        <dev class="mess">
+            <span>{{ user.nickname }}:</span>
+            <div>{{ mess.content }}</div><br>
+            {% if current_user.id == mess.author %}
+            <form action="../../delete_mess/{{ mess.id }}" style="float: right;">
+                <button class="delete">
+                    <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="40%"/>
+                    <!--Сделай их норальными, прошу-->
+                </button>
+            </form>
+            {% endif %}
+            <hr>
+        </dev>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

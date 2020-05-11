@@ -2,12 +2,9 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/post.css')}}">
 <div class="post">
-    {% for user in users %}
-    {% if user.id == post.author %}
     <div class="post_top">
         <span class="title">{{ post.title }}</span>
         <div class="buttons">
-            {% if current_user.id == user.id %}
             <form action="../../edit_post/{{ post.id }}">
                 <button class="edit">
                     <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>
@@ -18,32 +15,27 @@
                     <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
                 </button>
             </form>
-            {% endif %}
         </div>
     </div>
     <div class="post_middle">
-        <span class="author">Автор: <a href="../../users/{{ user.nickname }}">{{ user.nickname }}</a></span>
+        <span class="author">Автор: <a href="../../users/{{ users.filter(model.id == post.author).first().nickname }}">{{ users.filter(model.id == post.author).first().nickname }}</a></span>
         <span class="date"> {{ post.created_date.strftime('%H:%m %d/%m/%Y') }} </span>
     </div>
     <div class="content">{{ post.content }}</div>
 </div>
-{% endif %}
-{% endfor %}
 <hr>
 <div class="comments">
     <div class="users_coms">
         <div class="comment">
             {% for comm in comments %}
             <div class="top">
-                {% for user in users %}
-                {% if user.id == comm.author %}
-                <div class="author_com"><a href="../../users/{{user.nickname}}">{{user.nickname}}</a></div>
-                {% endif %}
-                {% endfor %}
+                <div class="author_com"><a
+                        href="../../users/{{users.filter(model.id == comm.author).first().nickname}}">{{
+                    users.filter(model.id == comm.author).first().nickname }}</a></div>
                 <div class="time_com">
-                            <span>
-                                {{ comm.created_date.strftime('%H:%m %d/%m/%Y') }}
-                            </span>
+                    <span>
+                         {{ comm.created_date.strftime('%H:%m %d/%m/%Y') }}
+                    </span>
                     <form action="../../delete_comm/{{comm.id}}">
                         <button class="delete">
                             <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>

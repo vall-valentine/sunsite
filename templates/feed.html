@@ -10,8 +10,6 @@
 
     {% for post in posts %}
     <div class="post" onclick="redirect('../../posts/{{post.id}}')">
-        {% for user in users %}
-        {% if user.id == post.author %}
         <div class="post_top">
             <span class="title">{{ post.title }}</span>
             <div class="buttons">
@@ -20,7 +18,7 @@
                         <img src="https://img.icons8.com/carbon-copy/100/000000/comments.png" width="100%"/>
                     </button>
                 </form>
-                {% if current_user.id == user.id %}
+                {% if current_user.id == post.author %}
                 <form action="../../edit_post/{{ post.id }}">
                     <button class="edit">
                         <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>
@@ -35,13 +33,15 @@
             </div>
         </div>
         <div class="post_middle">
-            <span class="author">Автор: <a href="../../users/{{ user.nickname }}">{{ user.nickname }}</a></span>
+            <span class="author">Автор: <a
+                    href="../../users/{{ users.filter(model.id == post.author).first().nickname }}">
+                {{ users.filter(model.id == post.author).first().nickname }}</a>
+            </span>
+
             <span class="date"> {{ post.created_date.strftime('%H:%m %d/%m/%Y') }} </span>
         </div>
         <div class="content">{{ post.content }}</div>
     </div>
-    {% endif %}
-    {% endfor %}
     {% endfor %}
 </div>
 <hr>

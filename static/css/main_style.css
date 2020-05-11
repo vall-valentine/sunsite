@@ -79,7 +79,6 @@
 }
 
 .nav .punct span:after {
-    background: none repeat scroll 0 0 transparent;
     bottom: 0;
     content: "";
     display: block;
@@ -101,7 +100,6 @@
     font-size: 16px;
     height: 60px;
     left: 0;
-    bottom: 0;
     width: 100%;
     background: linear-gradient(to top, #fff9c4, #fff59d);
     text-align: center;
@@ -109,7 +107,6 @@
     position: relative;
     bottom: 0;
 }
-
 .footer span {
     text-align: center;
 }

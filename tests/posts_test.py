@@ -44,10 +44,12 @@ print(get('http://localhost:8080/api/posts/1').json())
 # Изменение информации о посте
 print(put('http://localhost:8080/api/posts/2', json=
           {
-              'title': 'qw'
-          }
-          ).json()
+              'title': 'another title'
+          }).json()
       )
 
 # Удаление поста
+print(delete('http://localhost:8080/api/posts/2').json())
+
+# Вывод информации о чатах пользователя
 print(delete('http://localhost:8080/api/posts/2').json())

@@ -6,17 +6,24 @@ from sqlalchemy_serializer import SerializerMixin
 
 
 class Messages(SqlAlchemyBase, UserMixin, SerializerMixin):
+    """Модель сообщений"""
     __tablename__ = "messages"
 
+    # id сообщения
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
+    # id чата, к которому относится сообщение
     chat = sqlalchemy.Column(sqlalchemy.Integer,
                              sqlalchemy.ForeignKey("chats.id"))
-    chats = orm.relation("Chats")
+    # id автора сообщения
     author = sqlalchemy.Column(sqlalchemy.Integer,
                                sqlalchemy.ForeignKey("users.id"))
-    user = orm.relation("User")
+    # содержание сообщения
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+
+    # связь с таблицами пользователя и чатов
+    user = orm.relation("User")
+    chats = orm.relation("Chats")
 
     def __repr__(self):
         return f"<Message> {self.id} {self.content}"

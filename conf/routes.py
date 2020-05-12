@@ -5,10 +5,12 @@ from resources.comments_resourses import CommentResource, CommentsListResource
 from resources.error_handler import page_not_found
 from resources.messages_resource import MessageResource, MessagesListResource
 from resources.post_resources import PostsResource, PostsListResource
-from resources.user_resources import UsersResource, UsersListResource, ChatByUserResource
+from resources.user_resources import UsersResource, UsersListResource, \
+    ChatByUserResource
 
 
 def generate_routes(app):
+    """Генерация всех ресурсов для API"""
     app.register_error_handler(404, page_not_found)
     api = Api(app)
 

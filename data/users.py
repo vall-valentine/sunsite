@@ -8,24 +8,40 @@ from sqlalchemy_serializer import SerializerMixin
 
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
+    """Модель класса пользователей"""
     __tablename__ = "users"
 
+    # id пользователя
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    nickname = sqlalchemy.Column(sqlalchemy.String, nullable=False, unique=True)
+    # ник пользователя
+    nickname = sqlalchemy.Column(sqlalchemy.String, nullable=False,
+                                 unique=True)
+    # фамилия пользователя
     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    # имя поьзователя
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    # возраст пользователя
     age = sqlalchemy.Column(sqlalchemy.Integer)
+    # о пользователе
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    # почта пользователя
     email = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=False)
+
     achievements = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+
+    # пароль (захешированный)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    # дата изменения пользователя
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                       default=datetime.datetime.now)
+    # аватарка пользователя
     photo = sqlalchemy.Column(sqlalchemy.BLOB, nullable=True)
+    # имя изображения аватарки пользователя
     photo_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
+    # связь с таблицами постов, комментариев и сообщений
     posts = orm.relation("Posts", back_populates='user')
     comms = orm.relation("Comments", back_populates='user')
     messages = orm.relation("Messages", back_populates='user')

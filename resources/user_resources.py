@@ -7,6 +7,8 @@ from data.users import User
 
 
 def abort_if_user_not_found(user_id):
+    """Функция вывода сообщения при отсутвии пользователя
+     с указанным id"""
     session = db_session.create_session()
     user = session.query(User).get(user_id)
     if not user:
@@ -14,6 +16,7 @@ def abort_if_user_not_found(user_id):
 
 
 def abort_if_nick_not_unique(nick):
+    """Функция вывода сообщения при уже существующем нике"""
     session = db_session.create_session()
     user = session.query(User).filter(User.nickname == nick).first()
     if user:
@@ -21,6 +24,7 @@ def abort_if_nick_not_unique(nick):
 
 
 def abort_if_email_not_unique(email):
+    """Функция вывода сообщения при уже существующей почте"""
     session = db_session.create_session()
     user = session.query(User).filter(User.nickname == email).first()
     if user:
@@ -28,17 +32,19 @@ def abort_if_email_not_unique(email):
 
 
 class UsersResource(Resource):
+    """Ресурс для одного пользователя"""
     def get(self, user_id):
+        """Получение данных о пользователе"""
         abort_if_user_not_found(user_id)
         session = db_session.create_session()
         user = session.query(User).get(user_id)
         return jsonify({'user': user.to_dict(
             only=('id', 'nickname', 'email', 'surname',
                   'name', 'age', 'about',
-                  'achievements', 'hashed_password',
-                  'modified_date'))})
+                  'hashed_password', 'modified_date'))})
 
     def delete(self, user_id):
+        """Удаение пользователя"""
         abort_if_user_not_found(user_id)
         session = db_session.create_session()
         user = session.query(User).get(user_id)
@@ -47,6 +53,7 @@ class UsersResource(Resource):
         return jsonify({'success': 'OK'})
 
     def put(self, user_id):
+        """Изменение данных о пользователе"""
         abort_if_user_not_found(user_id)
         parser = reqparse.RequestParser()
         parser.add_argument('nickname', required=False)
@@ -57,7 +64,6 @@ class UsersResource(Resource):
         parser.add_argument('name', required=False)
         parser.add_argument('age', required=False, type=int)
         parser.add_argument('about', required=False)
-        parser.add_argument('achievements', required=False)
         parser.add_argument('password', required=False)
         args = parser.parse_args()
 
@@ -78,14 +84,13 @@ class UsersResource(Resource):
             user.about = args['about']
         if args['email']:
             user.email = args['email']
-        if args['achievements']:
-            user.achievements = args['achievements']
         if args['age']:
             user.age = args['age']
         if args['password']:
             user.set_password(args['password'])
         if args['photo']:
-            byte_array_my = bytes([int(num) for num in args['photo'].split('-')])
+            byte_array_my = bytes([int(num) for num in
+                                   args['photo'].split('-')])
             user.photo = byte_array_my
         if args['photo_name']:
             user.photo_name = args['photo_name']
@@ -95,7 +100,9 @@ class UsersResource(Resource):
 
 
 class UsersListResource(Resource):
+    """Ресурс для всех пользователей"""
     def get(self):
+        """Получение данных о пользователях"""
         session = db_session.create_session()
         users = session.query(User).all()
         return jsonify({'users': [item.to_dict(
@@ -105,6 +112,7 @@ class UsersListResource(Resource):
                   'modified_date')) for item in users]})
 
     def post(self):
+        """Добавление пользователя"""
         parser = reqparse.RequestParser()
         parser.add_argument('nickname', required=True)
         parser.add_argument('surname', required=False)
@@ -134,7 +142,9 @@ class UsersListResource(Resource):
 
 
 class ChatByUserResource(Resource):
+    """Ресурс для всех чатов одного пользователя"""
     def get(self, user_id):
+        """Получение данных о чатах конкретного пользователя"""
         abort_if_user_not_found(user_id)
         session = db_session.create_session()
         all_chats = session.query(Chats).all()

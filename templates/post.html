@@ -39,11 +39,13 @@
                     <span>
                          {{ comm.created_date.strftime('%H:%m %d/%m/%Y') }}
                     </span>
+                    {% if cur_user_id == comm.author %}
                     <form action="../../delete_comm/{{comm.id}}">
                         <button class="delete">
                             <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
                         </button>
                     </form>
+                    {% endif %}
                 </div>
             </div>
             <div class="comment_content">{{ comm.content }}</div>

@@ -13,10 +13,10 @@ print(post('http://localhost:8080/api/chats', json=
 
 # Корректный запрос на изменения чата
 print(put('http://localhost:8080/api/chats/1', json=
-{
-    'users': '1 2 3',
-    'title': 'Шучу, не первый!'
-}).json()
+          {
+               'users': '1 2 3',
+               'title': 'Шучу, не первый!'
+          }).json()
       )
 
 # Вывод всех чатов

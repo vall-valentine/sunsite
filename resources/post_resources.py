@@ -2,11 +2,11 @@ from flask import jsonify
 from flask_restful import reqparse, abort, Resource
 
 from data import db_session
-
 from data.posts import Posts
 
 
 def abort_if_post_not_found(post_id):
+    """Функция вывода сообщения при отсутвии поста с указанным id"""
     session = db_session.create_session()
     post = session.query(Posts).get(post_id)
     if not post:
@@ -14,7 +14,9 @@ def abort_if_post_not_found(post_id):
 
 
 class PostsResource(Resource):
+    """Ресурс для одного поста"""
     def get(self, post_id):
+        """Получение данных о посте"""
         abort_if_post_not_found(post_id)
         session = db_session.create_session()
         post = session.query(Posts).get(post_id)
@@ -23,6 +25,7 @@ class PostsResource(Resource):
                   'author', 'created_date'))})
 
     def delete(self, post_id):
+        """Удаение поста"""
         abort_if_post_not_found(post_id)
         session = db_session.create_session()
         post = session.query(Posts).get(post_id)
@@ -31,6 +34,7 @@ class PostsResource(Resource):
         return jsonify({'success': 'OK'})
 
     def put(self, post_id):
+        """Изменение данных о посте"""
         abort_if_post_not_found(post_id)
         parser = reqparse.RequestParser()
         parser.add_argument('title', required=False)
@@ -52,7 +56,9 @@ class PostsResource(Resource):
 
 
 class PostsListResource(Resource):
+    """Ресурс для всех постов"""
     def get(self):
+        """Получение данных о постах"""
         session = db_session.create_session()
         posts = session.query(Posts).all()
         return jsonify({'posts': [item.to_dict(
@@ -60,6 +66,7 @@ class PostsListResource(Resource):
                   'author', 'created_date')) for item in posts]})
 
     def post(self):
+        """Добавление поста"""
         parser = reqparse.RequestParser()
         parser.add_argument('title', required=True)
         parser.add_argument('content', required=True)

@@ -79,3 +79,6 @@ print(put('http://localhost:8080/api/users/4', json=
 
 # Удаление ползователя
 print(delete('http://localhost:8080/api/users/3').json())
+
+# Вывод информации о чатах пользователя
+print(get('http://localhost:8080/api/users/1/chats'))

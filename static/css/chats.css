@@ -26,6 +26,7 @@
     margin-right: auto;
     font-size: 46px;
     color: #000;
+    text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4);
 }
 
 .page_name .add_form {
@@ -72,6 +73,7 @@
 }
 
 .chat:hover {
+    background-color: #fff8e1;
     transform: scale(1.01);
 }
 

@@ -6,6 +6,7 @@
     <div class="post_top">
         <span class="title">{{ post.title }}</span>
         <div class="buttons">
+            {% if cur_user_id == post.author %}
             <form action="../../edit_post/{{ post.id }}">
                 <button class="edit">
                     <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>
@@ -16,6 +17,7 @@
                     <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
                 </button>
             </form>
+            {% endif %}
         </div>
     </div>
     <div class="post_middle">

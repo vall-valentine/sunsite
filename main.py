@@ -19,7 +19,7 @@ from data.users import User
 from forms.forms import PostForm, CommentsForm, MessageForm, ChatsFormCreate, ChatsFormEdit
 from forms.forms import RegisterForm, LoginForm, EditUserForm
 
-PROJECT_ROOT = 'C:/Users/kupco/Desktop/Project-3'
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(PROJECT_ROOT, 'static/img')
 
 app = Flask(__name__)
@@ -158,7 +158,8 @@ def open_post(post_id):
             'author': current_user.id
         })
         return redirect(f'/posts/{post_id}')
-    return render_template("post.html", post=postik, users=users, comments=comments, model=User)
+    return render_template("post.html", post=postik, users=users,
+                           comments=comments, model=User, cur_user_id=current_user.id)
 
 
 @app.route("/create_post", methods=['GET', 'POST'])
@@ -169,7 +170,7 @@ def create_post():
         post('http://localhost:8080/api/posts', json={
             'title': form_cr.title.data,
             'content': form_cr.content.data,
-            'author': 1
+            'author': current_user.id
         })
         return redirect('/feed')
     return render_template('create_post.html', title='Создание поста', form_cr=form_cr)
@@ -249,7 +250,7 @@ def user_page(nickname):
             body['photo_name'] = form.photo.data.filename
         put(f'http://localhost:8080/api/users/{current_user.id}', json=body)
 
-        return redirect(f'users/{user.nickname}')
+        return redirect(f'../../users/{user.nickname}')
 
     return render_template('user_page.html', title=nickname, nickname=nickname,
                            surname=user.surname, name=user.name, about=user.about,
@@ -264,6 +265,7 @@ def chats():
     users = session.query(User)
     nicks_and_avatars = {}
     chats_for_page = get(f'http://localhost:8080/api/users/{current_user.id}/chats').json()['chats']
+    chats_for_page = list(reversed(chats_for_page))
     for chat in chats_for_page:
         for user in chat[2].split():
             if int(user) != current_user.id:
@@ -322,43 +324,64 @@ def chat(chat_id):
                            model=User)
 
 
+def create_chat_with():
+    form = ChatsFormCreate()
+    user = form.users.data
+    title = form.title.data
+    if user == current_user.nickname:
+        return render_template('create_chat.html',
+                               title='Создание чата',
+                               form=form,
+                               message='Создать чат с собой нельзя')
+
+    if title.strip() == "":
+        return render_template('create_chat.html', title='Создание чата',
+                               form=form,
+                               message='Название чата не может быть пустым')
+    db_session.global_init("db/database.sqlite")
+    session = db_session.create_session()
+    users = session.query(User).filter(User.nickname == user).first()
+    if users:
+        post('http://localhost:8080/api/chats', json={
+            'users': str(users.id) + ' ' + str(current_user.id),
+            'title': title})
+        ch = session.query(Chats).all()[-1]
+        post('http://localhost:8080/api/messages', json={
+            'author': 1,
+            'content': f'<user {current_user.nickname} added>',
+            'chat': ch.id
+        })
+        post('http://localhost:8080/api/messages', json={
+            'author': 1,
+            'content': f'<user {users.nickname} added>',
+            'chat': ch.id
+        })
+        return redirect('/chats')
+    else:
+        return render_template('create_chat.html',
+                               title='Создание чата',
+                               form=form,
+                               message='Такого пользователя нет')
+
+
 @app.route("/create_chat", methods=['GET', 'POST'])
 @login_required
 def create_chat():
     form = ChatsFormCreate()
     if request.method == "POST":
-        user = form.users.data
-        title = form.title.data
-        if title.strip() == "":
-            return render_template('create_chat.html', title='Создание чата',
-                                   form=form,
-                                   message='Название чата не может быть пустым')
-        db_session.global_init("db/database.sqlite")
-        session = db_session.create_session()
-        users = session.query(User).filter(User.nickname == user).first()
-        if users:
-            post('http://localhost:8080/api/chats', json={
-                'users': str(users.id) + ' ' + str(current_user.id),
-                'title': title})
-            ch = session.query(Chats).all()[-1]
-            post('http://localhost:8080/api/messages', json={
-                'author': 1,
-                'content': f'<user {current_user.nickname} added>',
-                'chat': ch.id
-            })
-            post('http://localhost:8080/api/messages', json={
-                'author': 1,
-                'content': f'<user {users.nickname} added>',
-                'chat': ch.id
-            })
-            return redirect('/chats')
-        else:
-            return render_template('create_chat.html',
-                                   title='Создание чата',
-                                   form=form,
-                                   message='Такого пользователя нет')
+        return create_chat_with()
 
     return render_template('create_chat.html', title='Создание чата', form=form)
+
+
+@app.route("/create_chat/<nickname>", methods=['GET', 'POST'])
+@login_required
+def create_chat_by_user(nickname):
+    form = ChatsFormCreate()
+    if request.method == "POST":
+        create_chat_with()
+    return render_template('create_chat.html', title='Создание чата',
+                           form=form, value=nickname)
 
 
 @app.route("/edit_chat/<int:chat_id>", methods=['GET', 'POST'])
@@ -401,15 +424,6 @@ def delete_mess(mess_id):
     cur_chat = get(f'http://localhost:8080/api/messages/{mess_id}').json()['message']['chat']
     delete(f'http://localhost:8080/api/messages/{mess_id}')
     return redirect(f'../../chats/{cur_chat}')
-
-
-@app.route("/shop")
-@login_required
-def shop():
-    db_session.global_init("db/database.sqlite")
-    session = db_session.create_session()
-    user = session.query(User)
-    return render_template('shop.html', title='Shop')
 
 
 if __name__ == '__main__':

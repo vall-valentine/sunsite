@@ -26,18 +26,23 @@
 }
 
 .index {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
 }
-
 .index .about {
-    border: 2px solid #9E9E9E;
-    border-radius: 2%;
-    flex-grow: 1;
-    width: 50%;
-    height: 765px;
-    margin: 20px;
+	border: 2px solid #9E9E9E;
+	border-radius: 2%;
+	flex-grow: 1;
+	width: 50%;
+	display: flex;
+	flex-direction: column;
+	height: 765px;
+	margin:20px;
+}
+.index .about .photos {
+	display: flex;
+	flex-direction: row;
 }
 
 .index .reg_log {
@@ -221,4 +226,82 @@ input {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
+}
+
+.index .about .photos .valk {
+	flex-grow: 1;
+	width: 50%;
+	flex-direction: row;
+	border-radius: 2%;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 10px;
+	text-align: center;
+}
+.index .about .photos .gavr {
+	text-align: center;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-left: 10px;
+	flex-grow: 1;
+	width: 50%;
+	border-radius: 2%;
+}
+.img_div {
+	text-align: center;
+	border-radius: 2%;
+	height: 50%;
+	border-radius: 2%;
+	transition: all 1s;
+	top: 20px;
+}
+.img_div:hover .ava{
+	transform: scale(1.05);
+	filter: brightness(60%);
+}
+.img_div:hover .git_div {
+	opacity: 1;
+}
+.avatar {
+	border-radius: 2%;
+}
+.index .about .photos .gavr a, .index .about .photos .valk a {
+	text-decoration: none;
+}
+.ava {
+	transition: all 1s;
+}
+.git_div {
+	position: relative;
+	bottom: 60%;
+	left: 30%;
+	opacity: 0;
+	transition: all 1s;
+	z-index: 1;
+	height: 1px;
+	font-size: 250%;
+}
+.github {
+	margin-left: auto;
+	text-align: center;
+	letter-spacing: 3px;
+	display: flex;
+	z-index: 1;
+	color: #FFF;
+	position: relative;
+	top: 25%;
+	text-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+	transition: all 1s;
+}
+.text_about {
+	border-radius: 2%;
+	background-color: #fff9c4;
+	align-self: center;
+	margin-top: 10%;
+	padding: 5%;
+	font-size: 32px;
+	color: #424242;
+	text-shadow: 2px 1px 0px #fff, 4px 4px 0px #e0e0e0;
+	text-align: center;
+	width: 80%;
 }

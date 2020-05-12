@@ -13,8 +13,10 @@ class Chats(SqlAlchemyBase, UserMixin, SerializerMixin):
     # id чата
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
+
     # заголовок чата
     title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+
     # пользователи, находящиеся в чате
     users = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 

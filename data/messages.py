@@ -1,8 +1,9 @@
 import sqlalchemy
-from sqlalchemy import orm
-from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
+from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
+
+from .db_session import SqlAlchemyBase
 
 
 class Messages(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -12,12 +13,15 @@ class Messages(SqlAlchemyBase, UserMixin, SerializerMixin):
     # id сообщения
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
+
     # id чата, к которому относится сообщение
     chat = sqlalchemy.Column(sqlalchemy.Integer,
                              sqlalchemy.ForeignKey("chats.id"))
+
     # id автора сообщения
     author = sqlalchemy.Column(sqlalchemy.Integer,
                                sqlalchemy.ForeignKey("users.id"))
+
     # содержание сообщения
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/reset.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main_style.css')}}">
+    <link href="https://fonts.googleapis.com/css?family=Exo+2&display=swap" rel="stylesheet">
+    <title>{{title}}</title>
+</head>
+<body>
+<header>
+    {% if current_user.is_authenticated %}
+    <div class="nav">
+        <div class="punct"><img src="{{url_for('static', filename='img/ulitka.png')}}" alt="logo" width="120px"
+                                height="70px"></div>
+        <div class="punct" onclick="redirect('/feed')"><span>Лента</span></div>
+        <div class="punct" onclick="redirect('/chats')"><span>Чаты</span></div>
+        <div class="punct" onclick="redirect('/users/{{current_user.nickname}}')"><span>Профиль</span></div>
+        <div class="punct" onclick="redirect('/logout')"><span>Выход</span></div>
+    </div>
+    {% else %}
+    <div class="none_auth_nav">
+        <div class="solo_logo"><img src="{{url_for('static', filename='img/ulitka.png')}}" alt="logo" width="120px"
+                                    height="70px"></div>
+        <div class="logo_txt">
+            <span style="--i:1">#</span>
+            <span style="--i:2">д</span>
+            <span style="--i:3">о</span>
+            <span style="--i:4">м</span>
+            <span style="--i:5">а</span>
+            <span style="--i:6">_</span>
+            <span style="--i:7">л</span>
+            <span style="--i:8">у</span>
+            <span style="--i:9">ч</span>
+            <span style="--i:10">ш</span>
+            <span style="--i:11">е</span>
+        </div>
+    </div>
+    {% endif %}
+</header>
+<main role="main" class="container">
+    <div>{% block content %}{% endblock %}</div>
+    <script src="{{url_for('static', filename='js/main.js')}}"></script>
+</main>
+</body>
+</html>

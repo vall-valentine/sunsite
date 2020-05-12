@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/messages.css')}}">
+<div class="name_chat">
+    <div class="name">{{ chat.title }}</div>
+</div>
+<div class="messages">
+    {% for message in messages %}
+    <div class="message">
+        <div class="mess_content">
+            <div class="author">
+                <a href="../../users/{{users.filter(model.id == message.author).first().nickname}}">{{users.filter(model.id
+                    == message.author).first().nickname}}</a>:
+            </div>
+            {% if current_user.id == message.author %}
+            <form action="../../delete_mess/{{ message.id }}" class="del_form">
+                <div class="mess_delete">
+                    <button class="btn_delete">
+                        <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+        <div class="content">{{message.content}}</div>
+    </div>
+    {% endfor %}
+    <form class="mess" method="post" action="">
+        <div class="sendbar">
+            <textarea type="text" name="content" class="content" placeholder="Введите сообщение"></textarea>
+            <div class="div_send_button">
+                <button class="send_button">
+                    <img src="https://img.icons8.com/wired/64/000000/send.png" width="100%"/>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

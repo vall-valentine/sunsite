@@ -1,0 +1,158 @@
+.page {
+    display: flex;
+    margin-top: 60px;
+    margin-bottom: 20px;
+    margin-left: 15%;
+    margin-right: 15%;
+    padding: 5px;
+    align-items: center;
+    width: 70%;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.page_name {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+    padding: 10px;
+    border: 1px solid #ffecb3;
+}
+
+.page_name .text {
+    align-self: flex-start;
+    margin-right: auto;
+    font-size: 46px;
+    color: #000;
+    text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4);
+}
+
+.page_name .add_form {
+    margin-left: auto;
+}
+
+.page_name .add_chat {
+    box-shadow: 0 0 5px;
+    margin-left: auto;
+    align-self: end;
+    width: 50px;
+    height: 50px;
+    background-color: #9ccc65;
+    outline: 0;
+    transition: all 1s;
+    border: 0;
+    border-radius: 50%;
+}
+
+.page_name .add_chat:hover {
+    box-shadow: 0 0 10px;
+    transform: scale(1.04);
+}
+
+.chats {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+}
+
+.chat {
+    display: flex;
+    flex-direction: row;
+    width: calc(100% - 20px);
+    padding: 10px;
+    transition: all 1s;
+    border-bottom: 1px solid #ffecb3;
+    border-right: 2px solid #ffecb3;
+    border-top: 1px solid #ffecb3;
+    border-left: solid #ffecb3;
+    border-collapse: collapse;
+    height: 70px;
+}
+
+.chat:hover {
+    background-color: #fff8e1;
+    transform: scale(1.01);
+}
+
+.left {
+    text-align: left;
+}
+
+.left .avatar img {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+}
+
+.mid {
+    text-align: left;
+    margin-left: 10px;
+}
+
+.mid .name {
+    font-size: 25px;
+    margin-top: 20px;
+    text-shadow: 1px 2px 10px #b2ebf2;
+}
+
+.mid .name a {
+    text-decoration: none;
+    color: #0d47a1;
+}
+
+.mid .name a:hover {
+    color: #90caf9;
+}
+
+.mid .last_mess {
+    font-size: 18px;
+    color: #616161;
+}
+
+.right {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.time .date {
+    font-size: 18px;
+    margin-right: 20px;
+}
+
+.delete_button button {
+    width: 40px;
+    height: 40px;
+    background-color: #ff3d00;
+    outline: 0;
+    border: 0;
+    transition: all 1s;
+    border-radius: 2px;
+}
+
+.delete_button button:hover {
+    transform: scale(1.03);
+    background-color: #dd2c00;
+    box-shadow: 5px 10px;
+    border-radius: 20%;
+}
+
+.right .edit {
+    width: 40px;
+    height: 40px;
+    background-color: #81d4fa;
+    outline: 0;
+    border: 0;
+    transition: all 1s;
+    border-radius: 2px;
+}
+
+.right .edit:hover {
+    transform: scale(1.03);
+    background-color: #4fc3f7;
+    box-shadow: 5px 10px;
+    border-radius: 20%;
+}

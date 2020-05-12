@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/edit.css')}}">
+<div class="edit_post">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <input type="text" name="title" placeholder="Введите название чата" value="{{title_chat}}"><br>
+        <div class="btn_div">
+            <button type="submit" value="cr_post" name="btn_cr_post" class="sub_btn">Изменить</button>
+        </div>
+        <div class="alert_message">{{ message }}</div>
+    </form>
+</div>
+{% endblock %}

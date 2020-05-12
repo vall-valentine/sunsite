@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/reset.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/profile.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css?family=Exo+2&display=swap" rel="stylesheet">
+<div class="profile">
+    <div class="left_col">
+        <div class="photo_user">
+            <div class="img">
+                <img src="{{url_for('static', filename='img/' + image)}}" alt="Аватар">
+                <input form="edit_form" type="file" name="photo" class="img_btn" id="file" accept=".jpg, .jpeg, .png">
+                <div> {{ message }}</div>
+            </div>
+            <div class="to_achivs" onclick="redirect('../../create_chat/{{user.nickname}}')">Начать чат</div>
+        </div>
+    </div>
+
+    <div class="right_col">
+        <div class="user_top">
+            <div class="user_name">{{ nickname }}</div>
+            {% if user.id == current_user.id %}
+            <button class="edit">
+                <i class="fa fa-edit"></i>
+            </button>
+            {% endif %}
+            <button class="accept" type="submit" form="edit_form">
+                <i class="save_icon">
+                    <svg class="bi bi-check" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                </i>
+            </button>
+        </div>
+        <div class="info">
+            <form method="POST" action="" enctype="multipart/form-data" id="edit_form">
+                {{ form.hidden_tag() }}
+                <div class="param">
+                    <div class="info-title"><span>Имя:</span></div>
+                    <div class="info-title-answer">
+                        <input class="field" type="text" name="name_input" placeholder="Введите ваше имя">
+                        <span class="answer">{{ name }}</span>
+                    </div>
+                </div>
+                <div class="param">
+                    <div class="info-title"><span>Фамилия:</span></div>
+                    <div class="info-title-answer">
+                        <input class="field" type="text" name="surname_input" placeholder="Введите вашу фамилию">
+                        <span class="answer">{{ surname }}</span>
+                    </div>
+                </div>
+                <div class="param">
+                    <div class="info-title"><span>Возраст:</span></div>
+                    <div class="info-title-answer">
+                        <input type="number" class="field" name="age_input" placeholder="Введите ваш возраст">
+                        <span class="answer">{{ age }}</span>
+                    </div>
+                </div>
+                <div class="param">
+                    <div class="info-title"><span>О себе:</span></div>
+                    <div class="info-title-answer about_info">
+                        <textarea name="about_input" class="field" placeholder="Расскажите что-нибудь о себе"
+                                  rows="3"></textarea>
+                        <span class="answer">{{ about }}</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="posts">
+        </div>
+    </div>
+</div>
+<script src={{url_for('static', filename='js/main.js' )}}></script>
+{% endblock %}

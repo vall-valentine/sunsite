@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/reset.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/post.css')}}">
+<div class="post">
+    <div class="post_top">
+        <span class="title">{{ post.title }}</span>
+        <div class="buttons">
+            {% if cur_user_id == post.author %}
+            <form action="../../edit_post/{{ post.id }}">
+                <button class="edit">
+                    <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>
+                </button>
+            </form>
+            <form action="../../delete_post/{{post.id}}">
+                <button class="delete">
+                    <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="post_middle">
+        <span class="author">Автор: <a href="../../users/{{ users.filter(model.id == post.author).first().nickname }}">{{ users.filter(model.id == post.author).first().nickname }}</a></span>
+        <span class="date"> {{ post.created_date.strftime('%H:%m %d/%m/%Y') }} </span>
+    </div>
+    <div class="content">{{ post.content }}</div>
+</div>
+<hr>
+<div class="comments">
+    <div class="users_coms">
+        <div class="comment">
+            {% for comm in comments %}
+            <div class="top">
+                <div class="author_com"><a
+                        href="../../users/{{users.filter(model.id == comm.author).first().nickname}}">{{
+                    users.filter(model.id == comm.author).first().nickname }}</a></div>
+                <div class="time_com">
+                    <span>
+                         {{ comm.created_date.strftime('%H:%m %d/%m/%Y') }}
+                    </span>
+                    {% if cur_user_id == comm.author %}
+                    <form action="../../delete_comm/{{comm.id}}">
+                        <button class="delete">
+                            <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="comment_content">{{ comm.content }}</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="send_comment">
+        <form method="post" action="">
+            <textarea class="comm_input" name="comm_input" placeholder="Введите комментарий"></textarea>
+            <button class="send" type="submit"><img src="https://img.icons8.com/wired/64/000000/send.png" width="60%"/>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

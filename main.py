@@ -98,7 +98,7 @@ def register():
                                    message_reg="Такой пользователь уже есть")
 
         # если всё было корректно, добавляем пользователя
-        post('http://localhost:8080/api/users', json={
+        post('https://susite.herokuapp.com/api/users', json={
             'nickname': form_reg.nickname.data,
             'email': form_reg.email.data,
             'password': form_reg.password.data
@@ -217,7 +217,7 @@ def open_post(post_id):
 
     # добавление комментария, если была отправлена форма
     if request.method == "POST":
-        post('http://localhost:8080/api/comments', json={
+        post('https://susite.herokuapp.com/api/comments', json={
             'post_id': post_id,
             'content': form.comm_input.data,
             'author': current_user.id
@@ -240,7 +240,7 @@ def create_post():
 
     # добавление поста, если форма заполнена
     if form_cr.validate_on_submit():
-        post('http://localhost:8080/api/posts', json={
+        post('https://susite.herokuapp.com/api/posts', json={
             'title': form_cr.title.data,
             'content': form_cr.content.data,
             'author': current_user.id
@@ -260,7 +260,7 @@ def edit_post(post_id):
 
     # вывод предыдущих значений полей в форму
     if request.method == "GET":
-        posts = get(f'http://localhost:8080/api/posts/'
+        posts = get(f'https://susite.herokuapp.com/api/posts/'
                     f'{post_id}').json()['post']
         if (posts['author'] == current_user.id) and posts:
             form_cr.title.data = posts['title']
@@ -271,7 +271,7 @@ def edit_post(post_id):
     # извменение данных о посте
     if request.method == "POST":
         db_session.global_init("db/database.sqlite")
-        put(f'http://localhost:8080/api/posts/{post_id}', json={
+        put(f'https://susite.herokuapp.com/api/posts/{post_id}', json={
             'title': form_cr.title.data,
             'content': form_cr.content.data,
             'author': current_user.id
@@ -286,7 +286,7 @@ def edit_post(post_id):
 @login_required
 def delete_post(post_id):
     """Удаление поста"""
-    delete(f'http://localhost:8080/api/posts/{post_id}')
+    delete(f'https://susite.herokuapp.com/api/posts/{post_id}')
     return redirect('/')
 
 
@@ -294,9 +294,9 @@ def delete_post(post_id):
 @login_required
 def delete_comm(comm_id):
     """Удаление комментария"""
-    cur_post = get(f'http://localhost:8080/api/comments/'
+    cur_post = get(f'https://susite.herokuapp.com/api/comments/'
                    f'{comm_id}').json()['comment']['post_id']
-    delete(f'http://localhost:8080/api/comments/{comm_id}')
+    delete(f'https://susite.herokuapp.com/api/comments/{comm_id}')
     return redirect(f'../../posts/{cur_post}')
 
 
@@ -344,7 +344,7 @@ def user_page(nickname):
             photo_data = request.files.getlist("photo")[-1]
             body['photo'] = "-".join([str(byte) for byte in photo_data.read()])
             body['photo_name'] = form.photo.data.filename
-        put(f'http://localhost:8080/api/users/{current_user.id}', json=body)
+        put(f'https://susite.herokuapp.com/api/users/{current_user.id}', json=body)
 
         return redirect(f'../../users/{user.nickname}')
     return render_template('user_page.html',
@@ -372,7 +372,7 @@ def chats():
     nicks_and_avatars = {}
 
     # получение чатов пользователя
-    chats_for_page = get(f'http://localhost:8080/api/users/'
+    chats_for_page = get(f'https://susite.herokuapp.com/api/users/'
                          f'{current_user.id}/chats').json()['chats']
     chats_for_page = list(reversed(chats_for_page))
 
@@ -441,7 +441,7 @@ def chat(chat_id):
                                    chat=chatik,
                                    model=User)
 
-        post('http://localhost:8080/api/messages', json={
+        post('https://susite.herokuapp.com/api/messages', json={
             'chat': chat_id,
             'content': form.content.data,
             'author': current_user.id
@@ -484,18 +484,18 @@ def create_chat_function():
     # если пользователь существует
     if users:
         # создание чата
-        post('http://localhost:8080/api/chats', json={
+        post('https://susite.herokuapp.com/api/chats', json={
             'users': str(users.id) + ' ' + str(current_user.id),
             'title': title})
         ch = session.query(Chats).all()[-1]
         # сообщение о добавлении создателя чата
-        post('http://localhost:8080/api/messages', json={
+        post('https://susite.herokuapp.com/api/messages', json={
             'author': 1,
             'content': f'<user {current_user.nickname} added>',
             'chat': ch.id
         })
         # сообщение о добавлении собеседника
-        post('http://localhost:8080/api/messages', json={
+        post('https://susite.herokuapp.com/api/messages', json={
             'author': 1,
             'content': f'<user {users.nickname} added>',
             'chat': ch.id
@@ -561,7 +561,7 @@ def edit_chat(chat_id):
                                    message='Название чата не может'
                                            ' быть пустым')
 
-        put(f'http://localhost:8080/api/chats/{chat_id}', json={
+        put(f'https://susite.herokuapp.com/api/chats/{chat_id}', json={
             'title': title
         })
         return redirect('/chats')
@@ -575,7 +575,7 @@ def edit_chat(chat_id):
 @login_required
 def delete_chat(chat_id):
     """Удаление чата"""
-    delete(f'http://localhost:8080/api/chats/{chat_id}')
+    delete(f'https://susite.herokuapp.com/api/chats/{chat_id}')
     return redirect(f'../../chats')
 
 
@@ -583,9 +583,9 @@ def delete_chat(chat_id):
 @login_required
 def delete_mess(mess_id):
     """Удаление сообщения"""
-    cur_chat = get(f'http://localhost:8080/api/messages/'
+    cur_chat = get(f'https://susite.herokuapp.com/api/messages/'
                    f'{mess_id}').json()['message']['chat']
-    delete(f'http://localhost:8080/api/messages/{mess_id}')
+    delete(f'https://susite.herokuapp.com/api/messages/{mess_id}')
     return redirect(f'../../chats/{cur_chat}')
 
 
@@ -593,9 +593,9 @@ if __name__ == '__main__':
     db_session.global_init("db/database.sqlite")
     # Для heroku
 
-    # port = int(os.environ.get("PORT", 5000))
-    # app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
 
     # Для локального тестирования
 
-    app.run(port=8080, host='127.0.0.1')
+    # app.run(port=8080, host='127.0.0.1')

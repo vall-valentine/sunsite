@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/reset.css')}}">
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/post.css')}}">
 <div class="post">
     <div class="post_top">
         <span class="title">{{ post.title }}</span>
         <div class="buttons">
-            {% if curr%}
             <form action="../../edit_post/{{ post.id }}">
                 <button class="edit">
                     <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>

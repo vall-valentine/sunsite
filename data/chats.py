@@ -1,8 +1,9 @@
 import sqlalchemy
-from sqlalchemy import orm
-from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
+from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
+
+from .db_session import SqlAlchemyBase
 
 
 class Chats(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -11,7 +12,8 @@ class Chats(SqlAlchemyBase, UserMixin, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     messages = orm.relation("Messages", back_populates='chats')
-    users = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    users = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 
     def __repr__(self):
         return f"<Chat> {self.id} {self.users}"

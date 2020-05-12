@@ -5,16 +5,11 @@
 <div class="edit_post">
     <form method="POST">
         {{ form.hidden_tag() }}
-        <input type="text" name="users" placeholder="Введите ник пользователя, которого хотите добавить в чат" class="users">
-        {% for error in form.users.errors %}
-        <div class="error_handler">
-            {{ error }}
-        </div>
-        {% endfor %}
+        <input type="text" name="title" placeholder="Введите название чата" value="{{title_chat}}"><br>
         <div class="btn_div">
-            <button type="submit" value="cr_post" name="btn_cr_post" class="sub_btn">Создать</button>
+            <button type="submit" value="cr_post" name="btn_cr_post" class="sub_btn">Изменить</button>
         </div>
-        <div class="alert_message">{{ message_log }}</div>
+        <div class="alert_message">{{ message }}</div>
     </form>
 </div>
 {% endblock %}

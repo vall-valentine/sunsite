@@ -1,15 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="../../create_chat">
-        <button class="create_chat"><span>Начать чат</span></button>
-</form>
-
-<span>Ваши чаты:</span>
-{% for chat in chats %}
-<div class="chats" onclick="redirect('../../chats/{{chat[0]}}')">
-    <span>{{ chat[0] }}</span>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/chats.css')}}">
+<div class="page">
+    <div class="page_name">
+        <div class="text">
+            Ваши чаты:
+        </div>
+        <form action="../../create_chat" class="add_form">
+            <button class="add_chat">
+                <img src="https://img.icons8.com/carbon-copy/100/000000/add.png" width="100%"/>
+            </button>
+        </form>
+    </div>
+    <div class="chats">
+        {% for chat in chats %}
+        <div class="chat" onclick="redirect('../../chats/{{chat[0]}}')">
+            <div class="left">
+                <div class="avatar"><img src="{{url_for('static', filename='img/'+nicks_and_avatars[chat[0]][0])}}">
+                </div>
+            </div>
+            <div class="mid">
+                <div class="name">{{chat[1]}} (
+                    <a href="../../users/{{nicks_and_avatars[chat[0]][1]}}">{{nicks_and_avatars[chat[0]][1]}}</a> )
+                </div>
+                <div class="last_mess"></div>
+            </div>
+            <div class="right">
+                <form action="../../edit_chat/{{ chat[0] }}">
+                    <button class="edit">
+                        <img src="https://img.icons8.com/wired/64/000000/multi-edit.png" width="100%"/>
+                    </button>
+                </form>
+                <div class="time">
+                    <div class="date"></div>
+                </div>
+                <div class="delete_button">
+                    <form action="../../delete_chat/{{chat[0]}}">
+                        <button>
+                            <img src="https://img.icons8.com/wired/64/000000/delete-forever.png" width="100%"/>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
-{% endfor %}
-
 {% endblock %}

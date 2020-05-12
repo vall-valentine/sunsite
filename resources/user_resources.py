@@ -139,8 +139,8 @@ class ChatByUserResource(Resource):
         session = db_session.create_session()
         all_chats = session.query(Chats).all()
         chats_list = []
-        for ch in all_chats:
-            if user_id in [int(_) for _ in ch.users.split()]:
-                chats_list.append([ch.id, [int(user) for user in ch.users.split()]])
+        for chat in all_chats:
+            if user_id in [int(_) for _ in chat.users.split()]:
+                chats_list.append([chat.id, chat.title, chat.users])
 
         return jsonify({'chats': chats_list})

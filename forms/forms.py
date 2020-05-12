@@ -1,9 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, PasswordField, IntegerField, BooleanField
-from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, SubmitField, TextAreaField, PasswordField, IntegerField, BooleanField, FileField
+from wtforms import StringField, TextAreaField, PasswordField, IntegerField, FileField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired
 
 
 class RegisterForm(FlaskForm):
@@ -35,8 +33,13 @@ class EditUserForm(FlaskForm):
     photo = FileField("Photo")
 
 
-class ChatsForm(FlaskForm):
+class ChatsFormCreate(FlaskForm):
+    title = StringField("Title:", validators=[DataRequired()])
     users = StringField("Users: ", validators=[DataRequired()])
+
+
+class ChatsFormEdit(FlaskForm):
+    title = StringField("Title:", validators=[DataRequired()])
 
 
 class MessageForm(FlaskForm):

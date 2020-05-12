@@ -5,7 +5,9 @@
 <div class="edit_post">
     <form method="POST" action="{{url_for('create_chat')}}">
         {{ form.hidden_tag() }}
-        <input type="text" name="users" placeholder="Введите ник пользователя, с которым хотите начать чат" class="users">
+        <input type="text" name="title" placeholder="Введите название чата"><br>
+        <input type="text" name="users" placeholder="Введите ник пользователя, с которым хотите начать чат"
+               class="users">
         <div class="btn_div">
             <button type="submit" value="cr_post" name="btn_cr_post" class="sub_btn">Создать</button>
         </div>
